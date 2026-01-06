@@ -4,19 +4,19 @@ Repository for demo files to generate data and indexes for semantic search demo 
 ### Files
 ```requirements.txt``` python packages to install
 
-```sample.json`` sample schema 
+```sample.json``` sample schema 
 
 
 ```.env``` sets MONGODB_URL, DATABASE, COLLECTION, and VOYAGEAI_API_KEY as environment variables. Please create and set your own ```VOYAGEAI_API_KEY``` from voyageai.com
 
 
-```.generateNameDescription.py``` generates a list of app namess and descriptions. The execution of the ```generateNameDescriptions.py``` will generate app.txt. and description.txt. 
+```generateNameDescription.py``` generates a list of app namess and descriptions. The execution of the ```generateNameDescriptions.py``` will generate app.txt. and description.txt. 
 
 
-```.generateData.py``` generates batches of record to insert into MongoDB Cluster
+```generateData.py``` generates batches of record to insert into MongoDB Cluster
 
 
-```.generateEmbeddings.py``` generates embeddings for description and store embeddings in ```description_embeddings``` field
+```generateEmbeddings.py``` generates embeddings for description and store embeddings in ```description_embeddings``` field
 
 
 ```atlas-search-index.json``` is the Atlas Search Index Mapping
@@ -27,7 +27,21 @@ Repository for demo files to generate data and indexes for semantic search demo 
 
 ```trigger.json``` Atlas Trigger function to update ```description_embeddings``` when document is updated
 
+## Install Dependencies
+```pip3 install -r requirements.txt```
+
+## Configure ```.env``` Variables
+Deploy a VOYAGEAI_API_KEY from voyageai.com
+
+In ```.env``` set VOYAGEAI_API_KEY
+
 ## Data Generation
+
+### Generate Name and Description
+Generate 1M different descriptions and 125K application names.
+
+```python3 generateNameDescriptions.py```
+
 
 
 .
