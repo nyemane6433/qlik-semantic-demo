@@ -1,0 +1,4 @@
+faker==39.0.0
+pymongo==4.15.5
+voyageai==0.3.7
+dotenv==0.9.9
