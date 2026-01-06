@@ -1,5 +1,5 @@
 # Qlik Semantic Search Demo
-Repository for demo files to generate data and indexes for semantic search demo at Qlik.
+This repository contains the utilities and configuration files required to generate synthetic application data, index it in MongoDB Atlas, and perform semantic search using Voyage AI embeddings.
 
 ### Files
 ```requirements.txt``` python packages to install
@@ -38,7 +38,7 @@ Deploy a VOYAGEAI_API_KEY from https://voyageai.com and set to VOYAGEAI_API_KEY
 ### Generate Name and Description
 Generate 1M different descriptions and 100K application names.
 
-```python3 generateNameDescriptions.py```
+Run ```python3 generateNameDescriptions.py```
 
 ### Load Data
 In ```.generateData.py``` modify ```total_count``` (line 24) and ```batch_size``` (line 26).
@@ -47,8 +47,12 @@ In ```.generateData.py``` modify ```total_count``` (line 24) and ```batch_size``
 
 ```batch_size``` is the number of json records in each batch of insert_many.
 
+Run ```python3 generateData.py```
+
 ## Generate Embeddings
 Once the data load is complete, run ```generateEmbeddings``` to set ```description_embeddings``` field. We are currently using ```voyage-3-large``` model with 1024 dimensions. 
+
+Run ```python3 generateEmbeddings.py```
 
 ## Atlas Search & Vector Search
 Create an Atlas Search Index in the UI using the index mapping in ```atlas-search-index.json```. Create an Atlas Vector Search Index in the UI using the index mapping in ```atlas-vector-search-index.json```.
