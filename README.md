@@ -1,5 +1,5 @@
 # Qlik Semantic Search Demo
-Repository for demo files to generate data and indexes for semantic search demo at Qlik
+Repository for demo files to generate data and indexes for semantic search demo at Qlik.
 
 ### Files
 ```requirements.txt``` python packages to install
@@ -41,17 +41,51 @@ Generate 1M different descriptions and 100K application names.
 ```python3 generateNameDescriptions.py```
 
 ### Load Data
-In ```.generateData.py``` modify ```total_count``` (line 24) and ```batch_size`` (line 26).
+In ```.generateData.py``` modify ```total_count``` (line 24) and ```batch_size``` (line 26).
 
 ```total_count``` is the number of json records to load.
 
 ```batch_size``` is the number of json records in each batch of insert_many.
 
 ## Generate Embeddings
-Once the data load is complete, run ```generateEmbeddings``` to set ```description_embeddings``` field. We are currently using ```voyage-3-large``` models with 1024 dimensions. 
+Once the data load is complete, run ```generateEmbeddings``` to set ```description_embeddings``` field. We are currently using ```voyage-3-large``` model with 1024 dimensions. 
 
 ## Atlas Search & Vector Search
-Create an Atlas Search Index in the UI using the index mapping in ```atlas-search-index.json``. Create an Atlas Vector Search Index in the UI using the index mapping in ```atlas-vector-search-index.json``.
+Create an Atlas Search Index in the UI using the index mapping in ```atlas-search-index.json```. Create an Atlas Vector Search Index in the UI using the index mapping in ```atlas-vector-search-index.json```.
+
+## Create Atlas Trigger
+Atlas Triggers and Functions to update the description_embeddings when document is inserted, updated, and replaced. 
+
+### Trigger Details
+<mark>Trigger Type</mark>: ```Database```
+
+<mark>Watch Against</mark>: ```Collection```
+
+<mark>Cluster Name</mark>: ```qlik```
+
+<mark>Database Name</mark>: ```qlik```
+
+<mark>Collection Name</test>: ```test```
+
+<mark>Operation Type</mark>: ```Insert Document``` ```Update Document``` ```Replace Document```
+
+<mark>Full Document</mark>: ```Toggle ON```
+
+<mark>Document Pre-image</mark>: Do not enable
+
+### Event Type
+
+<mark>Select An Event Type</mark>: ```function```
+
+<mark>Function</mark>: Select ```+New Function``` from drop down
+
+<mark>Function Name</mark>: ```updateEmbeddings```
+
+<mark>Function</mark>: copy and paste the function in ```trigger.js```
+
+<mark>Trigger Name</mark>: ```updateEmbeddings```
+
+
 
 
 
