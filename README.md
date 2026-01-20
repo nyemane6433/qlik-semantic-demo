@@ -187,4 +187,3 @@ Set up an Atlas Trigger to automatically update embeddings when documents are mo
 
 ---
 
-**Need Help?** Open an issue in this repository or consult the MongoDB Atlas and Voyage AI documentation linked above.
