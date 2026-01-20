@@ -1,7 +1,24 @@
-# Qlik Semantic Search Demo
-This repository contains the utilities and configuration files required to generate synthetic application data, index it in MongoDB Atlas, and perform semantic search using Voyage AI embeddings.
+# 🔍 Qlik Semantic Search Demo
 
-### Files
+A demonstration project showcasing semantic search capabilities using MongoDB Atlas Vector Search, Voyage AI embeddings, and automated data pipelines. This repository enables you to generate synthetic application data, create vector embeddings, and perform intelligent semantic searches.
+
+## 🎯 What This Demo Does
+
+This project demonstrates:
+- **Synthetic Data Generation**: Create realistic application names and descriptions at scale
+- **Vector Embeddings**: Automatically generate embeddings using Voyage AI's `voyage-3-large` model
+- **Semantic Search**: Perform intelligent searches that understand meaning, not just keywords
+- **Real-time Updates**: Auto-update embeddings when documents change using Atlas Triggers
+
+## ⚠️ Prerequisites
+
+Before getting started, ensure you have:
+- **Python 3.8+** installed on your system
+- **MongoDB Atlas Account** with a cluster deployed
+- **Voyage AI API Key** from [voyageai.com](https://voyageai.com)
+- Basic familiarity with MongoDB and Python
+
+## 📁 Project Structure
 
 ```text
 qlik-semantic-demo/
@@ -10,7 +27,7 @@ qlik-semantic-demo/
 │   ├── generateNameDescriptions.py
 │   ├── generateData.py
 │   └── generateEmbeddings.py
-├── indexes/                     # indexes for search and vector search
+├── indexes/                     # Indexes for search and vector search
 │   ├── atlas-search-index.json  
 │   └── atlas-vector-search-index.json
 ├── .env                         # API keys & DB strings (Keep this local!)
@@ -19,73 +36,155 @@ qlik-semantic-demo/
 ├── requirements.txt             # Python package list
 └── trigger.js                   # Atlas Function code for the trigger
 ```
-## Install Dependencies
-```pip3 install -r requirements.txt```
 
-## Configure ```.env``` Variables
-Deploy a VOYAGEAI_API_KEY from https://voyageai.com and set to VOYAGEAI_API_KEY
+## 🚀 Quick Start
 
-## Data Generation
-Navigate to data-pipeline folder: ```cd data-pipeline```
+### 1. 🐍 Set Up Python Virtual Environment
 
-### Generate Name and Description
-Generate 1M different descriptions and 100K application names.
+```bash
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
 
-Run ```python3 generateNameDescriptions.py```
+### 2. ⚙️ Install Dependencies
 
-### Load Data
-In ```.generateData.py``` modify ```total_count``` (line 24) and ```batch_size``` (line 26).
+```bash
+pip3 install -r requirements.txt
+```
 
-```total_count``` is the number of json records to load.
+Alternatively, use the provided install script:
+```bash
+./install.sh
+```
 
-```batch_size``` is the number of json records in each batch of insert_many.
+### 3. 🔑 Configure Environment Variables
 
-Run ```python3 generateData.py```
+Create a `.env` file in the project root with the following variables:
 
-## Generate Embeddings
-Once the data load is complete, run ```generateEmbeddings``` to set ```description_embeddings``` field. We are currently using ```voyage-3-large``` model with 1024 dimensions. 
+```bash
+# Voyage AI Configuration
+VOYAGEAI_API_KEY=your_voyage_ai_api_key_here
 
-Run ```python3 generateEmbeddings.py```
+# MongoDB Atlas Configuration
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/
+MONGODB_DATABASE=qlik
+MONGODB_COLLECTION=test
+```
 
-## Atlas Search & Vector Search
-Create an Atlas Search Index in the UI using the index mapping in ```atlas-search-index.json```. Create an Atlas Vector Search Index in the UI using the index mapping in ```atlas-vector-search-index.json```.
+**Get your Voyage AI API Key**: Visit [voyageai.com](https://voyageai.com) and create an account to obtain your API key.
 
-## Create Atlas Trigger
-Atlas Triggers and Functions to update the description_embeddings when document is inserted, updated, and replaced. 
+## 🎲 Data Generation Pipeline
 
-### Trigger Details
-<mark>**Trigger Type**</mark>: **Database**
+### Step 1: Generate Names and Descriptions
 
-<mark>**Watch Against**</mark>: **Collection**
+Navigate to the data-pipeline folder and generate synthetic data:
 
-<mark>**Cluster Name**</mark>: **qlik**
+```bash
+cd data-pipeline
+python3 generateNameDescriptions.py
+```
 
-<mark>**Database Name**</mark>: **qlik**
+This will create:
+- **1,000,000** unique application descriptions
+- **100,000** unique application names
 
-<mark>**Collection Name**</mark>: **test**
+### Step 2: Load Data into MongoDB
 
-<mark>**Operation Type**</mark>: ```Insert Document``` ```Update Document``` ```Replace Document```
+Edit `generateData.py` to configure your data load parameters:
 
-<mark>**Full Document**</mark>: **Toggle ON**
+```python
+# Line 24
+total_count = 10000  # Number of documents to generate
 
-<mark>**Document Pre-image**</mark>: **Do not enable**
+# Line 26
+batch_size = 1000    # Documents per batch insert
+```
 
-### Event Type
+Run the data loading script:
 
-<mark>**Select An Event Type**</mark>: **function**
+```bash
+python3 generateData.py
+```
 
-<mark>**Function**</mark>: **Select ```+New Function``` from drop down**
+### Step 3: 🧮 Generate Vector Embeddings
 
-<mark>**Function Name**</mark>: **updateEmbeddings**
+Once data loading is complete, generate embeddings for the `description` field using the Voyage AI `voyage-3-large` model (1024 dimensions):
 
-<mark>**Function**</mark>: **copy and paste the function in ```trigger.js```**
+```bash
+python3 generateEmbeddings.py
+```
 
-<mark>**Trigger Name**</mark>: **updateEmbeddings**
+This script will:
+- Read all documents from your collection
+- Generate embeddings for each description
+- Store embeddings in the `description_embeddings` field
 
+## 🔎 Atlas Search & Vector Search Setup
 
+### Create Atlas Search Index
 
+1. Navigate to your MongoDB Atlas cluster
+2. Go to the **Search** tab
+3. Click **Create Search Index**
+4. Select **JSON Editor**
+5. Copy the contents of `indexes/atlas-search-index.json`
+6. Paste into the editor and create the index
 
+### Create Atlas Vector Search Index
 
+1. In the **Search** tab, click **Create Search Index**
+2. Select **Atlas Vector Search**
+3. Choose **JSON Editor**
+4. Copy the contents of `indexes/atlas-vector-search-index.json`
+5. Paste into the editor and create the index
 
+## ⚡ Create Atlas Trigger for Auto-Updates
 
-.
+Set up an Atlas Trigger to automatically update embeddings when documents are modified.
+
+### Trigger Configuration
+
+1. Navigate to **Triggers** in your Atlas cluster
+2. Click **Add Trigger**
+3. Configure with the following settings:
+
+**Trigger Details:**
+- **Trigger Type**: Database
+- **Watch Against**: Collection
+- **Cluster Name**: qlik
+- **Database Name**: qlik
+- **Collection Name**: test
+- **Operation Type**: Select all three:
+  - ✅ Insert Document
+  - ✅ Update Document
+  - ✅ Replace Document
+- **Full Document**: Toggle **ON**
+- **Document Pre-image**: Leave **OFF**
+
+**Event Type:**
+- **Select An Event Type**: Function
+- **Function**: Select **+New Function** from dropdown
+- **Function Name**: `updateEmbeddings`
+- **Function Code**: Copy and paste the code from `trigger.js`
+- **Trigger Name**: `updateEmbeddings`
+
+4. Click **Save** to activate the trigger
+
+## 📊 Configuration Details
+
+### Embedding Model
+- **Model**: `voyage-3-large`
+- **Dimensions**: 1024
+- **Use Case**: Optimized for semantic search and retrieval tasks
+
+## 🔗 Useful Links
+
+- [MongoDB Atlas Documentation](https://www.mongodb.com/docs/atlas/)
+- [MongoDB Atlas Search](https://www.mongodb.com/docs/atlas/atlas-search/)
+- [MongoDB Atlas Vector Search](https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-overview/)
+- [Voyage AI Documentation](https://docs.voyageai.com/)
+- [Atlas Triggers Documentation](https://www.mongodb.com/docs/atlas/app-services/triggers/)
+
+---
+
+**Need Help?** Open an issue in this repository or consult the MongoDB Atlas and Voyage AI documentation linked above.
